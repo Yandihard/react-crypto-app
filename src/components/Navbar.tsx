@@ -3,10 +3,11 @@ import { type GlobalData } from '../models/HomeData'
 import { formatNumberWithCommas, formatDecimal, formatCurrencyCompact } from '../utils/formatter'
 
 interface NavbarProps {
-  stats: GlobalData
+  stats: GlobalData | null
+  isLoading: boolean
 }
 
-const Navbar: React.FC<NavbarProps> = ({ stats }) => {
+const Navbar: React.FC<NavbarProps> = ({ stats, isLoading }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // 1. Inisialisasi state berdasarkan preferensi sistem atau localStorage
@@ -34,7 +35,6 @@ const Navbar: React.FC<NavbarProps> = ({ stats }) => {
     setIsDarkMode(!isDarkMode)
   };
 
-  if (!stats) return <div>Loading...</div>
   return (
     <>
       {/* GLOBAL STATS BAR */}
@@ -43,21 +43,34 @@ const Navbar: React.FC<NavbarProps> = ({ stats }) => {
         data-purpose="global-market-stats"
       >
         <div className="max-w-7xl mx-auto flex flex-wrap gap-x-4 gap-y-1 items-center">
-          <span>Coins: <span className="text-blue-600 font-medium">{formatNumberWithCommas(stats.data.active_cryptocurrencies)}</span></span>
-          <span>Exchanges: <span className="text-blue-600 font-medium">{formatNumberWithCommas(stats.data.markets)}</span></span>
-          <span>
-            Market Cap: <span className="text-blue-600 font-medium">{formatCurrencyCompact(stats.data.total_market_cap.usd)}</span>
-            <span className="text-emerald-500 ml-1">▲ {formatNumberWithCommas(stats.data.market_cap_change_percentage_24h_usd)}%</span>
-          </span>
-          <span>24h Vol: <span className="text-blue-600 font-medium">{formatCurrencyCompact(stats.data.total_volume.usd)}</span></span>
-          <span>
-            Dominance: <span className="text-gray-900 font-medium">BTC {formatDecimal(stats.data.market_cap_percentage.btc)}% ETH {formatDecimal(stats.data.market_cap_percentage.eth)}%</span>
-          </span>
-          <span className="ml-auto hidden md:inline">
-            Gas: <span className="text-blue-600 font-medium">24 GWEI</span>
-          </span>
+          {isLoading || !stats ? (
+            <div className="flex gap-4 animate-pulse py-1">
+              <div className="h-3 w-16 bg-gray-200 rounded"></div>
+              <div className="h-3 w-20 bg-gray-200 rounded"></div>
+              <div className="h-3 w-32 bg-gray-200 rounded"></div>
+              <div className="h-3 w-24 bg-gray-200 rounded"></div>
+              <div className="h-3 w-40 bg-gray-200 rounded"></div>
+            </div>
+          ) : (
+            <>
+              <span>Coins: <span className="text-blue-600 font-medium">{formatNumberWithCommas(stats.data.active_cryptocurrencies)}</span></span>
+              <span>Exchanges: <span className="text-blue-600 font-medium">{formatNumberWithCommas(stats.data.markets)}</span></span>
+              <span>
+                Market Cap: <span className="text-blue-600 font-medium">{formatCurrencyCompact(stats.data.total_market_cap.usd)}</span>
+                <span className="text-emerald-500 ml-1">▲ {formatNumberWithCommas(stats.data.market_cap_change_percentage_24h_usd)}%</span>
+              </span>
+              <span>24h Vol: <span className="text-blue-600 font-medium">{formatCurrencyCompact(stats.data.total_volume.usd)}</span></span>
+              <span>
+                Dominance: <span className="text-gray-900 font-medium">BTC {formatDecimal(stats.data.market_cap_percentage.btc)}% ETH {formatDecimal(stats.data.market_cap_percentage.eth)}%</span>
+              </span>
+              <span className="ml-auto hidden md:inline">
+                Gas: <span className="text-blue-600 font-medium">24 GWEI</span>
+              </span>
+            </>
+          )}
         </div>
       </div>
+
 
       {/* MAIN HEADER */}
       <header

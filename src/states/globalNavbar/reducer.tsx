@@ -1,19 +1,46 @@
 // states/globalData/reducer.ts
-import { ActionType, type GlobalDataAction } from './action'
+import { ActionType } from './action'
 import type { GlobalData } from '../../models/HomeData'
 
-// Perbaikan: Gunakan GlobalDataAction sebagai tipe action
+export type GlobalDataState = {
+  data: GlobalData | null
+  isLoading: boolean
+  error: string | null
+}
+
+const initialState: GlobalDataState = {
+  data: null,
+  isLoading: false,
+  error: null
+}
+
 function globalDataReducer(
-  globalData: GlobalData | null = null,
-  action: GlobalDataAction | { type: string; payload?: unknown } = { type: '' }
-): GlobalData | null {
+  state: GlobalDataState = initialState,
+  action: any
+): GlobalDataState {
   switch (action.type) {
     case ActionType.RECEIVE_GLOBAL_DATA:
-      // TypeScript sekarang tahu action ini punya payload.globalData
-      return (action as GlobalDataAction).payload.globalData
+      return {
+        ...state,
+        data: action.payload.globalData,
+        isLoading: false,
+        error: null
+      }
+    case ActionType.SET_GLOBAL_DATA_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload.isLoading
+      }
+    case ActionType.SET_GLOBAL_DATA_ERROR:
+      return {
+        ...state,
+        error: action.payload.error,
+        isLoading: false
+      }
     default:
-      return globalData
+      return state
   }
 }
+
 
 export default globalDataReducer

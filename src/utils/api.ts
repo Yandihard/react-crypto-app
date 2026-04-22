@@ -1,4 +1,4 @@
-import type { GlobalData, TrendingResponse } from '../models/HomeData'
+import type { GlobalData, TrendingResponse, MarketCoin } from '../models/HomeData'
 
 const BASE_URL = 'https://api.coingecko.com/api/v3'
 const apiKey = import.meta.env.VITE_COINGECKO_API_KEY
@@ -48,4 +48,27 @@ const fetchTrendingCoins = async (): Promise<TrendingResponse | null> => {
   }
 }
 
-export { fetchGlobalStats, fetchTrendingCoins }
+/**
+ * Mengambil data pasar koin (untuk tabel) dengan pagination
+ */
+const fetchCoinsMarkets = async (page: number = 1, perPage: number = 100): Promise<MarketCoin[] | null> => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=${page}&sparkline=true&price_change_percentage=1h,24h,7d`,
+      options
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: MarketCoin[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Gagal mengambil data koin markets:", error);
+    return null;
+  }
+}
+
+
+export { fetchGlobalStats, fetchTrendingCoins, fetchCoinsMarkets }

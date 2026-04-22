@@ -1,16 +1,45 @@
-import { ActionType, type TrendingAction } from './action'
+import { ActionType } from './action'
 import type { TrendingCoin } from '../../models/HomeData'
 
+export type TrendingState = {
+  data: TrendingCoin[]
+  isLoading: boolean
+  error: string | null
+}
+
+const initialState: TrendingState = {
+  data: [],
+  isLoading: false,
+  error: null
+}
+
 function trendingReducer(
-  trending: TrendingCoin[] = [],
-  action: TrendingAction | { type: string; payload?: unknown } = { type: '' }
-): TrendingCoin[] {
+  state: TrendingState = initialState,
+  action: any
+): TrendingState {
   switch (action.type) {
     case ActionType.RECEIVE_TRENDING:
-      return (action as TrendingAction).payload.trending
+      return {
+        ...state,
+        data: action.payload.trending,
+        isLoading: false,
+        error: null
+      }
+    case ActionType.SET_TRENDING_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload.isLoading
+      }
+    case ActionType.SET_TRENDING_ERROR:
+      return {
+        ...state,
+        error: action.payload.error,
+        isLoading: false
+      }
     default:
-      return trending
+      return state
   }
 }
+
 
 export default trendingReducer
