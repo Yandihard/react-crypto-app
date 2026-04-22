@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import globalDataReducer from './globalNavbar/reducer'
 import trendingReducer from './globalTrending/reducer'
+import cryptoTableReducer from './cryptoTable/reducer'
 
 const store = configureStore({
   reducer: {
     globalData: globalDataReducer,
-    globalTrending: trendingReducer
+    globalTrending: trendingReducer,
+    cryptoTable: cryptoTableReducer
   }
 })
 
